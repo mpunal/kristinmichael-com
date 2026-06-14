@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Michael &amp; Kristin's Wedding | September 25, 2026 | Butler, TN</title>
+  <meta name="description" content="Join Michael &amp; Kristin as they celebrate their wedding on Friday, September 25, 2026 at Sugar Hollow Retreat in Butler, Tennessee.">
+  <link rel="canonical" href="https://kristinmichael.com/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kristinmichael.com/">
+  <meta property="og:title" content="Michael &amp; Kristin's Wedding | September 25, 2026">
+  <meta property="og:description" content="Join us on Friday, September 25, 2026 at Sugar Hollow Retreat in Butler, Tennessee.">
+  <meta property="og:image" content="https://kristinmichael.com/images/og-cover.jpg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- JSON-LD Event Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "name": "Michael & Kristin's Wedding",
+    "startDate": "2026-09-25T16:00:00-05:00",
+    "endDate": "2026-09-26T00:00:00-05:00",
+    "eventStatus": "https://schema.org/EventScheduled",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "location": {
+      "@type": "Place",
+      "name": "Sugar Hollow Retreat",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Butler",
+        "addressRegion": "TN",
+        "addressCountry": "US"
+      }
+    },
+    "url": "https://kristinmichael.com/",
+    "description": "The wedding celebration of Michael and Kristin at Sugar Hollow Retreat in Butler, Tennessee.",
+    "organizer": [
+      { "@type": "Person", "name": "Michael" },
+      { "@type": "Person", "name": "Kristin" }
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <!-- ── HEADER ───────────────────────────────────────────── -->
+  <header class="site-header" role="banner">
+    <nav class="nav-container" aria-label="Main navigation">
+      <a href="/" class="nav-logo" aria-label="Michael &amp; Kristin — home">
+        M <span class="nav-amp">&amp;</span> K
+      </a>
+
+      <button
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+        aria-label="Open navigation menu"
+      >
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+
+      <ul class="nav-menu" id="nav-menu" role="list">
+        <li><a href="/" class="nav-link" aria-current="page">Home</a></li>
+        <li><a href="#details" class="nav-link">Details</a></li>
+        <li>
+          <a
+            href="https://withjoy.com/michael-kristin-2026/"
+            class="nav-link nav-link--cta"
+            target="_blank"
+            rel="noopener noreferrer"
+          >RSVP</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content">
+
+    <!-- ── HERO ─────────────────────────────────────────────── -->
+    <section class="hero" aria-label="Wedding announcement">
+      <div
+        class="hero-bg"
+        role="img"
+        aria-label="Scenic mountain view at Sugar Hollow Retreat, Butler, Tennessee"
+      ></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <p class="eyebrow">We're getting married</p>
+
+        <h1 class="hero-names">
+          Michael <span class="amp-italic">&amp;</span> Kristin
+        </h1>
+
+        <div class="ornament" aria-hidden="true">
+          <span class="ornament-line"></span>
+          <svg class="ornament-leaf" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 2C12 2 4 8 4 14a8 8 0 0 0 16 0C20 8 12 2 12 2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            <line x1="12" y1="22" x2="12" y2="10" stroke="currentColor" stroke-width="1.2"/>
+          </svg>
+          <span class="ornament-line"></span>
+        </div>
+
+        <p class="hero-date">Friday, September 25, 2026</p>
+        <p class="hero-location">Sugar Hollow Retreat &bull; Butler, Tennessee</p>
+        <p class="hero-tagline">We can't wait to share our special day with you!</p>
+
+        <div class="hero-buttons">
+          <a
+            href="https://withjoy.com/michael-kristin-2026/"
+            class="btn btn-primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >RSVP</a>
+          <a
+            href="https://withjoy.com/michael-kristin-2026/"
+            class="btn btn-ghost"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Registry</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── COUNTDOWN ─────────────────────────────────────────── -->
+    <section class="countdown-section" aria-label="Countdown to the wedding">
+      <div class="container">
+        <p class="eyebrow eyebrow--dark">Counting down to</p>
+        <h2 class="section-title">Our Wedding Day</h2>
+
+        <div
+          class="countdown"
+          id="countdown"
+          role="timer"
+          aria-live="off"
+          aria-label="Time remaining until the wedding"
+        >
+          <div class="unit">
+            <span class="unit-number" id="cd-days">--</span>
+            <span class="unit-label">Days</span>
+          </div>
+          <span class="unit-sep" aria-hidden="true">:</span>
+          <div class="unit">
+            <span class="unit-number" id="cd-hours">--</span>
+            <span class="unit-label">Hours</span>
+          </div>
+          <span class="unit-sep" aria-hidden="true">:</span>
+          <div class="unit">
+            <span class="unit-number" id="cd-minutes">--</span>
+            <span class="unit-label">Minutes</span>
+          </div>
+          <span class="unit-sep" aria-hidden="true">:</span>
+          <div class="unit">
+            <span class="unit-number" id="cd-seconds">--</span>
+            <span class="unit-label">Seconds</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DETAILS ───────────────────────────────────────────── -->
+    <section class="details-section" id="details" aria-labelledby="details-heading">
+      <div class="container">
+        <p class="eyebrow eyebrow--dark">Mark your calendar</p>
+        <h2 class="section-title" id="details-heading">The Details</h2>
+
+        <div class="cards">
+
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                <line x1="16" y1="2" x2="16" y2="6"/>
+                <line x1="8" y1="2" x2="8" y2="6"/>
+                <line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+            </div>
+            <h3 class="card-title">Date &amp; Time</h3>
+            <p class="card-body">Friday<br>September 25, 2026</p>
+          </article>
+
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <h3 class="card-title">Venue</h3>
+            <p class="card-body">Sugar Hollow Retreat<br>Butler, Tennessee</p>
+          </article>
+
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+            <h3 class="card-title">RSVP &amp; Registry</h3>
+            <p class="card-body">
+              <a
+                href="https://withjoy.com/michael-kristin-2026/"
+                class="text-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >Visit our WithJoy page</a>
+            </p>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA ───────────────────────────────────────────────── -->
+    <section class="cta-section" aria-label="RSVP call to action">
+      <div class="container">
+        <h2 class="cta-title">Ready to celebrate with us?</h2>
+        <p class="cta-body">
+          We'd love to have you join us for our special day in the beautiful mountains
+          of East Tennessee.
+        </p>
+        <div class="cta-buttons">
+          <a
+            href="https://withjoy.com/michael-kristin-2026/"
+            class="btn btn-terracotta btn-lg"
+            target="_blank"
+            rel="noopener noreferrer"
+          >RSVP Now</a>
+          <a
+            href="https://withjoy.com/michael-kristin-2026/"
+            class="btn btn-ghost-white btn-lg"
+            target="_blank"
+            rel="noopener noreferrer"
+          >View Registry</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── FOOTER ───────────────────────────────────────────── -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p class="footer-names">Michael &amp; Kristin</p>
+      <p class="footer-date">September 25, 2026 &bull; Butler, Tennessee</p>
+      <p class="footer-venue">Sugar Hollow Retreat</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
