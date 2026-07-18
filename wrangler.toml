@@ -1,0 +1,11 @@
+name = "kristinmichael-com"
+compatibility_date = "2026-07-01"
+pages_build_output_dir = "."
+
+# With pages_build_output_dir set, this file is the authoritative binding config
+# for Cloudflare Pages — the dashboard bindings UI becomes read-only, and the
+# database_id below must be the real UUID before deploying to production.
+[[d1_databases]]
+binding = "DB"
+database_name = "wedding-travel"
+database_id = "REPLACE-AFTER-D1-CREATE"
