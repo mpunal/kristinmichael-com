@@ -8,4 +8,4 @@ pages_build_output_dir = "."
 [[d1_databases]]
 binding = "DB"
 database_name = "wedding-travel"
-database_id = "REPLACE-AFTER-D1-CREATE"
+database_id = "850ea18b-4703-42c7-b766-2d1e49a6e466"
