@@ -1,7 +1,6 @@
-# Local dev secrets (GUEST_PASSWORD etc.) — never commit
-.dev.vars
-
-# Wrangler local state (local D1 SQLite, caches)
-.wrangler/
-
-node_modules/
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
