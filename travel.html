@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Board | Michael &amp; Kristin's Wedding</title>
+  <meta name="description" content="Guest travel coordination for Michael &amp; Kristin's wedding.">
+  <meta name="robots" content="noindex">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── HEADER ───────────────────────────────────────────── -->
+  <header class="site-header site-header--solid" role="banner">
+    <nav class="nav-container" aria-label="Main navigation">
+      <a href="/" class="nav-logo" aria-label="Michael &amp; Kristin — home">
+        M <span class="nav-amp">&amp;</span> K
+      </a>
+
+      <button
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+        aria-label="Open navigation menu"
+      >
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+
+      <ul class="nav-menu" id="nav-menu" role="list">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/#details" class="nav-link">Details</a></li>
+        <li><a href="/travel" class="nav-link" aria-current="page">Travel</a></li>
+        <li>
+          <a
+            href="https://withjoy.com/michael-kristin-2026/"
+            class="nav-link nav-link--cta"
+            target="_blank"
+            rel="noopener noreferrer"
+          >RSVP</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="travel-main">
+    <div class="container">
+
+      <p class="eyebrow eyebrow--dark">Getting there together</p>
+      <h1 class="section-title">Guest Travel Board</h1>
+
+      <!-- ── PASSWORD GATE ─────────────────────────────────── -->
+      <section id="gate" class="card gate-box" aria-label="Guest password" hidden>
+        <h2 class="card-title">Guests only</h2>
+        <p class="card-body">
+          This page is for wedding guests — enter the password from your invitation.
+        </p>
+        <form id="gate-form">
+          <div class="field">
+            <label class="field-label" for="gate-password">Password</label>
+            <input type="password" id="gate-password" autocomplete="off" required>
+          </div>
+          <p id="gate-error" class="form-error" hidden>
+            That password isn't right — double-check your invitation.
+          </p>
+          <button type="submit" class="btn btn-primary">Enter</button>
+        </form>
+      </section>
+
+      <!-- ── APP ───────────────────────────────────────────── -->
+      <section id="app" hidden>
+        <p class="travel-intro">
+          The venue is a bit of a trek, so let's help each other get there!
+          Share when you're flying in and out, whether you need a ride or have
+          seats to spare, and coordinate directly with other guests.
+          Please share approximate times only — no flight numbers needed.
+        </p>
+
+        <div class="card form-card">
+          <h2 class="card-title" id="form-title">Share your travel plans</h2>
+          <form id="post-form" novalidate>
+
+            <div class="form-grid">
+              <div class="field">
+                <label class="field-label" for="f-name">Name <span class="req">*</span></label>
+                <input id="f-name" name="name" maxlength="200" required>
+              </div>
+              <div class="field">
+                <label class="field-label" for="f-email">Email <span class="req">*</span></label>
+                <input id="f-email" name="email" type="email" maxlength="200" required>
+              </div>
+              <div class="field">
+                <label class="field-label" for="f-phone">Phone <span class="opt">(optional)</span></label>
+                <input id="f-phone" name="phone" type="tel" maxlength="200">
+              </div>
+            </div>
+
+            <fieldset class="ride-fieldset">
+              <legend class="field-label">Rides</legend>
+              <div class="radio-row">
+                <label class="radio-label">
+                  <input type="radio" name="ride" value="need"> I need a ride
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="ride" value="offer"> I can offer a ride
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="ride" value="info" checked> Just sharing my plans
+                </label>
+              </div>
+              <div class="field field--narrow">
+                <label class="field-label" for="f-count" id="count-label">People in your group</label>
+                <input id="f-count" name="count" type="number" min="0" max="20" inputmode="numeric">
+              </div>
+            </fieldset>
+
+            <div class="leg-grid">
+              <fieldset class="leg-fieldset">
+                <legend class="field-label">Arrival</legend>
+                <div class="field">
+                  <label class="field-label" for="f-arr-airport">Airport</label>
+                  <input id="f-arr-airport" name="arrival_airport" maxlength="200" placeholder="e.g. TRI, AVL, CLT">
+                </div>
+                <div class="field">
+                  <label class="field-label" for="f-arr-date">Date</label>
+                  <input id="f-arr-date" name="arrival_date" type="date">
+                </div>
+                <div class="field">
+                  <label class="field-label" for="f-arr-time">Approx. time</label>
+                  <input id="f-arr-time" name="arrival_time" maxlength="200" placeholder="e.g. around 2pm">
+                </div>
+              </fieldset>
+
+              <fieldset class="leg-fieldset">
+                <legend class="field-label">Departure</legend>
+                <div class="field">
+                  <label class="field-label" for="f-dep-airport">Airport</label>
+                  <input id="f-dep-airport" name="departure_airport" maxlength="200" placeholder="e.g. TRI, AVL, CLT">
+                </div>
+                <div class="field">
+                  <label class="field-label" for="f-dep-date">Date</label>
+                  <input id="f-dep-date" name="departure_date" type="date">
+                </div>
+                <div class="field">
+                  <label class="field-label" for="f-dep-time">Approx. time</label>
+                  <input id="f-dep-time" name="departure_time" maxlength="200" placeholder="e.g. late morning">
+                </div>
+              </fieldset>
+            </div>
+
+            <div class="field field--narrow">
+              <label class="field-label" for="f-pin" id="pin-label">Choose a 4-digit PIN <span class="req">*</span></label>
+              <input id="f-pin" name="pin" inputmode="numeric" pattern="\d{4}" maxlength="4" autocomplete="off" required>
+              <p class="field-hint" id="pin-hint">You'll use this PIN to edit or delete your post later.</p>
+            </div>
+
+            <p id="form-error" class="form-error" hidden></p>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="submit-btn">Post my plans</button>
+              <button type="button" class="btn btn-secondary" id="cancel-edit" hidden>Cancel edit</button>
+            </div>
+          </form>
+        </div>
+
+        <h2 class="posts-heading">Who's coming &amp; going</h2>
+        <p id="posts-empty" class="posts-empty" hidden>
+          No posts yet — be the first to share your plans!
+        </p>
+        <div id="posts" class="posts-list"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ── FOOTER ───────────────────────────────────────────── -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p class="footer-names">Michael &amp; Kristin</p>
+      <p class="footer-date">September 25, 2026 &bull; Butler, Tennessee</p>
+      <p class="footer-venue">Sugar Hollow Retreat</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="travel.js"></script>
+</body>
+</html>
