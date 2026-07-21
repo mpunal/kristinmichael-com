@@ -3,14 +3,9 @@
    the response and the caller cannot supply a different address.
    Without RESEND_API_KEY (local dev) the email payload is logged instead. */
 
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-  });
-}
+import { json } from './response.js';
 
-export async function onRequestPost({ request, env }) {
+async function sendPin(request, env) {
   if (!env.GUEST_PASSWORD || request.headers.get('X-Guest-Key') !== env.GUEST_PASSWORD) {
     return json({ error: 'unauthorized' }, 401);
   }
@@ -59,6 +54,6 @@ export async function onRequestPost({ request, env }) {
   return json({ ok: true, message: 'PIN sent to the email on this post' });
 }
 
-export async function onRequest({ request }) {
-  if (request.method !== 'POST') return json({ error: 'method not allowed' }, 405);
-}
+export const methods = {
+  POST: sendPin,
+};

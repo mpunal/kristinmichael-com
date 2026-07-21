@@ -1,0 +1,30 @@
+{
+  // Single source of truth for this Worker. Do NOT add a wrangler.toml
+  // alongside this file — when both exist Wrangler reads only the .jsonc,
+  // and the .toml's bindings vanish silently with no warning. That failure
+  // mode cost a production outage on 2026-07-21.
+  "name": "kristinmichael-com",
+  "main": "src/index.js",
+  "compatibility_date": "2026-07-01",
+
+  // Only public/ is web-accessible. Everything outside it — schema.sql,
+  // src/, the setup docs — stays private by construction. Never point this
+  // at the repo root.
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "wedding-travel",
+      "database_id": "850ea18b-4703-42c7-b766-2d1e49a6e466"
+    }
+  ],
+
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

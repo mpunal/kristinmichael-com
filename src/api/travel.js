@@ -2,6 +2,8 @@
    Auth: every request must carry header X-Guest-Key === env.GUEST_PASSWORD.
    The 4-digit pin is stored per post and never returned by any endpoint. */
 
+import { json } from './response.js';
+
 const TEXT_FIELDS = [
   'name', 'email', 'phone',
   'arrival_airport', 'arrival_date', 'arrival_time',
@@ -11,13 +13,6 @@ const TEXT_FIELDS = [
 const PUBLIC_COLS =
   'id, name, email, phone, arrival_airport, arrival_date, arrival_time, ' +
   'departure_airport, departure_date, departure_time, ride, party_size, seats, created_at';
-
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-  });
-}
 
 function authorized(request, env) {
   return Boolean(env.GUEST_PASSWORD) &&
@@ -71,7 +66,7 @@ async function getPost(env, id) {
     .bind(id).first();
 }
 
-export async function onRequestGet({ request, env }) {
+async function list(request, env) {
   if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401);
   const { results } = await env.DB.prepare(
     `SELECT ${PUBLIC_COLS} FROM travel_posts
@@ -80,7 +75,7 @@ export async function onRequestGet({ request, env }) {
   return json({ posts: results });
 }
 
-export async function onRequestPost({ request, env }) {
+async function create(request, env) {
   if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401);
   const body = await readBody(request);
   if (!body) return json({ error: 'invalid JSON body' }, 400);
@@ -104,7 +99,7 @@ export async function onRequestPost({ request, env }) {
   return json({ post: await getPost(env, meta.last_row_id) }, 201);
 }
 
-export async function onRequestPut({ request, env }) {
+async function update(request, env) {
   if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401);
   const body = await readBody(request);
   if (!body) return json({ error: 'invalid JSON body' }, 400);
@@ -135,7 +130,7 @@ export async function onRequestPut({ request, env }) {
   return json({ post: await getPost(env, id) });
 }
 
-export async function onRequestDelete({ request, env }) {
+async function remove(request, env) {
   if (!authorized(request, env)) return json({ error: 'unauthorized' }, 401);
   const body = await readBody(request);
   if (!body) return json({ error: 'invalid JSON body' }, 400);
@@ -150,8 +145,9 @@ export async function onRequestDelete({ request, env }) {
   return json({ ok: true });
 }
 
-export async function onRequest({ request }) {
-  if (!['GET', 'POST', 'PUT', 'DELETE'].includes(request.method)) {
-    return json({ error: 'method not allowed' }, 405);
-  }
-}
+export const methods = {
+  GET: list,
+  POST: create,
+  PUT: update,
+  DELETE: remove,
+};
