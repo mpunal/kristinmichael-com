@@ -758,6 +758,20 @@ input:focus-visible {
   font-style: italic;
 }
 
+.posts-section + .posts-section {
+  margin-top: 2.5rem;
+}
+
+.posts-subheading {
+  font-family: var(--serif);
+  font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+  font-weight: 400;
+  color: var(--brown);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--parchment);
+}
+
 .posts-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -783,6 +797,10 @@ input:focus-visible {
   font-size: 1.25rem;
   font-weight: 400;
   color: var(--brown);
+  /* A long unbroken name (or a pasted token) must wrap, not push the card
+     wider than the viewport. Matches .post-contact below. */
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
 .post-badge {
@@ -797,11 +815,13 @@ input:focus-visible {
 }
 .post-badge--need  { background-color: var(--terra); }
 .post-badge--offer { background-color: var(--green); }
-.post-badge--info  { background-color: var(--tan-mid); }
 
 .post-leg {
   font-size: 0.9375rem;
   color: var(--brown-lt);
+  /* Guest-entered airport values can be long unbroken strings; wrap them so a
+     post card never forces the whole page to scroll horizontally on mobile. */
+  overflow-wrap: anywhere;
 }
 .post-leg strong { color: var(--brown); font-weight: 700; }
 

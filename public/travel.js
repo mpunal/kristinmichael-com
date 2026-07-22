@@ -33,6 +33,17 @@ function formatDate(str) {
   return `${MONTHS[Number(m[2]) - 1]} ${Number(m[3])}`;
 }
 
+// Format a 24-hour 'HH:MM' time (from <input type="time">) as '9:00 AM'.
+// Anything that isn't HH:MM is passed through unchanged.
+function formatTime(str) {
+  const m = /^(\d{2}):(\d{2})$/.exec(str || '');
+  if (!m) return str || '';
+  let h = Number(m[1]);
+  const suffix = h < 12 ? 'AM' : 'PM';
+  h = h % 12 || 12;
+  return `${h}:${m[2]} ${suffix}`;
+}
+
 function apiFetch(method, url, body) {
   const opts = { method, headers: { 'X-Guest-Key': guestKey } };
   if (body) {
@@ -104,39 +115,66 @@ function el(tag, className, text) {
 }
 
 function badgeFor(post) {
-  if (post.ride === 'need') {
-    const n = post.party_size;
-    return el('span', 'post-badge post-badge--need',
-      n ? `Needs a ride · party of ${n}` : 'Needs a ride');
-  }
   if (post.ride === 'offer') {
     const n = post.seats;
     return el('span', 'post-badge post-badge--offer',
       n ? `Offering ${n} seat${n === 1 ? '' : 's'}` : 'Offering a ride');
   }
   const n = post.party_size;
-  return el('span', 'post-badge post-badge--info',
-    n ? `Sharing plans · party of ${n}` : 'Sharing plans');
+  return el('span', 'post-badge post-badge--need',
+    n ? `Needs a ride · party of ${n}` : 'Needs a ride');
 }
 
 function legLine(label, airport, date, time) {
   if (!airport && !date && !time) return null;
-  const parts = [airport, formatDate(date), time].filter(Boolean);
+  const parts = [airport, formatDate(date), formatTime(time)].filter(Boolean);
   const p = el('p', 'post-leg');
   p.appendChild(el('strong', null, `${label}: `));
   p.appendChild(document.createTextNode(parts.join(' · ')));
   return p;
 }
 
+// Sort within a section: by arrival airport code (A–Z), then by arrival time
+// latest-first. Posts missing an airport or time sort to the bottom of their
+// group so the coordination-relevant entries stay at the top.
+function sortForBoard(list) {
+  const airport = (p) => (p.arrival_airport || '').toUpperCase();
+  const time = (p) => p.arrival_time || '';
+  return [...list].sort((a, b) => {
+    const aa = airport(a), ba = airport(b);
+    if (aa !== ba) {
+      if (!aa) return 1;
+      if (!ba) return -1;
+      return aa < ba ? -1 : 1;
+    }
+    const at = time(a), bt = time(b);
+    if (at === bt) return 0;
+    if (!at) return 1;
+    if (!bt) return -1;
+    return at < bt ? 1 : -1; // descending — latest arrival first
+  });
+}
+
 function renderPosts(posts) {
   postsEl.replaceChildren();
   postsEmpty.hidden = posts.length > 0;
 
-  for (const post of posts) {
+  renderSection('Looking for rides', posts.filter((p) => p.ride === 'need'));
+  renderSection('Space available', posts.filter((p) => p.ride === 'offer'));
+}
+
+function renderSection(title, posts) {
+  if (posts.length === 0) return;
+
+  const section = el('div', 'posts-section');
+  section.appendChild(el('h3', 'posts-subheading', title));
+  const list = el('div', 'posts-list');
+
+  for (const post of sortForBoard(posts)) {
     const card = el('article', 'card post-card');
 
     const head = el('div', 'post-head');
-    head.appendChild(el('h3', 'post-name', post.name));
+    head.appendChild(el('h4', 'post-name', post.name));
     head.appendChild(badgeFor(post));
     card.appendChild(head);
 
@@ -165,8 +203,11 @@ function renderPosts(posts) {
     actions.append(editBtn, delBtn, remindBtn);
     card.appendChild(actions);
 
-    postsEl.appendChild(card);
+    list.appendChild(card);
   }
+
+  section.appendChild(list);
+  postsEl.appendChild(section);
 }
 
 // ── Form ─────────────────────────────────────────────────────

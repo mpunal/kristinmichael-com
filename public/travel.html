@@ -37,7 +37,7 @@
       <ul class="nav-menu" id="nav-menu" role="list">
         <li><a href="/" class="nav-link">Home</a></li>
         <li><a href="/#details" class="nav-link">Details</a></li>
-        <li><a href="/travel" class="nav-link" aria-current="page">Travel</a></li>
+        <li><a href="/travel" class="nav-link" aria-current="page">Coordinate Travel</a></li>
         <li>
           <a
             href="https://withjoy.com/michael-kristin-2026/"
@@ -60,7 +60,7 @@
       <section id="gate" class="card gate-box" aria-label="Guest password" hidden>
         <h2 class="card-title">Guests only</h2>
         <p class="card-body">
-          This page is for wedding guests — enter the password from your invitation.
+          This page is for wedding guests — enter the password that was emailed to you.
         </p>
         <form id="gate-form">
           <div class="field">
@@ -68,7 +68,7 @@
             <input type="password" id="gate-password" autocomplete="off" required>
           </div>
           <p id="gate-error" class="form-error" hidden>
-            That password isn't right — double-check your invitation.
+            That password isn't right — double-check or reach out if you forgot.
           </p>
           <button type="submit" class="btn btn-primary">Enter</button>
         </form>
@@ -77,10 +77,10 @@
       <!-- ── APP ───────────────────────────────────────────── -->
       <section id="app" hidden>
         <p class="travel-intro">
-          The venue is a bit of a trek, so let's help each other get there!
-          Share when you're flying in and out, whether you need a ride or have
-          seats to spare, and coordinate directly with other guests.
-          Please share approximate times only — no flight numbers needed.
+          The venue is a bit of a trek, you can use this page to coordinate
+          travel to &amp; from airports. Share when you're flying in and out,
+          whether you need a ride or have seats to spare, and coordinate
+          directly with other guests.
         </p>
 
         <div class="card form-card">
@@ -106,13 +106,10 @@
               <legend class="field-label">Rides</legend>
               <div class="radio-row">
                 <label class="radio-label">
-                  <input type="radio" name="ride" value="need"> I need a ride
+                  <input type="radio" name="ride" value="need" checked> I need a ride
                 </label>
                 <label class="radio-label">
                   <input type="radio" name="ride" value="offer"> I can offer a ride
-                </label>
-                <label class="radio-label">
-                  <input type="radio" name="ride" value="info" checked> Just sharing my plans
                 </label>
               </div>
               <div class="field field--narrow">
@@ -130,11 +127,12 @@
                 </div>
                 <div class="field">
                   <label class="field-label" for="f-arr-date">Date</label>
-                  <input id="f-arr-date" name="arrival_date" type="date">
+                  <input id="f-arr-date" name="arrival_date" type="date"
+                         value="2026-09-24" min="2026-09-20" max="2026-09-30">
                 </div>
                 <div class="field">
-                  <label class="field-label" for="f-arr-time">Approx. time</label>
-                  <input id="f-arr-time" name="arrival_time" maxlength="200" placeholder="e.g. around 2pm">
+                  <label class="field-label" for="f-arr-time">Arrival Time</label>
+                  <input id="f-arr-time" name="arrival_time" type="time">
                 </div>
               </fieldset>
 
@@ -146,11 +144,12 @@
                 </div>
                 <div class="field">
                   <label class="field-label" for="f-dep-date">Date</label>
-                  <input id="f-dep-date" name="departure_date" type="date">
+                  <input id="f-dep-date" name="departure_date" type="date"
+                         value="2026-09-27" min="2026-09-20" max="2026-09-30">
                 </div>
                 <div class="field">
-                  <label class="field-label" for="f-dep-time">Approx. time</label>
-                  <input id="f-dep-time" name="departure_time" maxlength="200" placeholder="e.g. late morning">
+                  <label class="field-label" for="f-dep-time">Departure Time</label>
+                  <input id="f-dep-time" name="departure_time" type="time">
                 </div>
               </fieldset>
             </div>
@@ -174,7 +173,7 @@
         <p id="posts-empty" class="posts-empty" hidden>
           No posts yet — be the first to share your plans!
         </p>
-        <div id="posts" class="posts-list"></div>
+        <div id="posts"></div>
       </section>
 
     </div>
