@@ -102,7 +102,10 @@ All requests authenticated. Each expects a `4xx` and **no row created**.
 | B6 | `pin` | `123`, `12345`, `abcd`, `12a4`, omitted | `400` PIN must be exactly 4 digits |
 | B7 | `pin` | `0000` | `201` — leading zeros are valid |
 | B8 | `ride` | `carpool` | `400` invalid ride option |
-| B9 | `ride` | omitted | `201`, defaults to `info` |
+| B8b | `ride` | `info` | `400` — `info` was removed 2026-07-21; only `need`/`offer` |
+| B9 | `ride` | omitted | `400` invalid ride option — `ride` is now **required**, no default |
+| B15 | `arrival_time` / `departure_time` | `09:00`, `23:59` | `201` — 24-hour `HH:MM` accepted |
+| B16 | `arrival_time` / `departure_time` | `24:00`, `9am`, `9:00 AM`, `1:2` | `400` invalid — must be `HH:MM` |
 | B10 | `party_size` | `-1`, `21`, `1.5`, `abc` | `400` between 0 and 20 |
 | B11 | `party_size` | `0` and `20` | `201` — inclusive bounds |
 | B12 | text fields | exactly 200 chars | `201` |
@@ -185,7 +188,8 @@ Arm `browser_handle_dialog` **before** any click that triggers a modal.
 
 **E1 — gate blocks by default.** Load `/travel` with clean storage → the
 `#gate` section is visible, `#app` is hidden, and no guest names or emails appear
-anywhere in the DOM.
+anywhere in the DOM. The gate copy reads "enter the password that was emailed to
+you" (not "from your invitation"), and the nav label reads "Coordinate Travel".
 
 **E2 — wrong password.** Submit a wrong password → `#gate-error` becomes visible,
 `#app` stays hidden.
@@ -201,7 +205,27 @@ falls back to the gate rather than showing a broken empty app.
 
 **E6 — create via form.** Fill the form, choose "I can offer a ride", set a count,
 submit → the new card appears with an `Offering N seats` badge. Verify the
-`offer` branch maps the count to `seats`, not `party_size` (`travel.js:193-194`).
+`offer` branch maps the count to `seats`, not `party_size` (`travel.js`).
+
+**E6b — ride options (changed 2026-07-21).** Only two radios exist: "I need a
+ride" and "I can offer a ride". "Just sharing my plans" is **gone**. "I need a
+ride" is checked by default.
+
+**E6c — date defaults.** On a fresh form the arrival date is pre-filled
+`2026-09-24` and departure `2026-09-27`; the picker won't allow dates outside
+2026-09-20…2026-09-30.
+
+**E6d — time fields.** Arrival/Departure time inputs are `type="time"` (labelled
+"Arrival Time" / "Departure Time"). Enter `18:15`; the rendered tile shows it as
+`6:15 PM`.
+
+**E6e — two sections + sorting.** Create posts across both ride types and airports.
+The board renders exactly two sections, "Looking for rides" (needs) then "Space
+available" (offers). Within each, cards are ordered by arrival airport code A→Z,
+then by arrival time latest-first. An empty section renders no heading.
+
+**E6f — phone display.** A post created with a phone number shows it on the tile
+after the email (` · <phone>`); a post without one shows only the email.
 
 **E7 — client-side validation.** Submit with a blank name → inline
 `#form-error`, no network request. Same for a 3-digit PIN.
@@ -229,8 +253,8 @@ page does not scroll horizontally (`document.scrollWidth <= window.innerWidth`).
 Do **not** rely on another suite's data being present — create your own post
 first, `QATEST-E1-longtoken`, whose `arrival_airport` is a single 200-char
 unbroken string (`A`×200). That is the realistic worst case a guest can enter,
-and it must not break the layout. **Known to FAIL today** — see Findings §2 —
-so this test currently documents an open defect rather than a passing state.
+and it must not break the layout. Fixed 2026-07-21 (`overflow-wrap: anywhere` on
+`.post-leg`/`.post-name`); this test is now expected to **PASS**.
 
 ---
 
@@ -369,35 +393,32 @@ XSS neutralized (`textContent`), mailto injection neutralized (attribute
 encoding), SQLi defeated (bound params), and every private path — including the
 `.git` directory that was public earlier that day — now returns 404.
 
-Open defects, highest priority first:
+Defects 1, 2, and 4 were **fixed 2026-07-21**; 3 and 5 remain open.
 
-1. **PINs logged in plaintext (privacy).** `src/api/remind.js` logs the full
-   email object — including the PIN — when `RESEND_API_KEY` is unset, and
-   `wrangler.jsonc` sets `observability.head_sampling_rate: 1`, so 100% of
-   Forgot-PIN calls persist a guest PIN into Workers logs. Fix before the guest
-   password is distributed.
+1. **[FIXED]** ~~PINs logged in plaintext.~~ `src/api/remind.js` no longer logs
+   the email object; the no-Resend branch logs only `PIN reminder skipped for
+   post <id>` — no PIN, no recipient address. Verified: dev log shows 0
+   occurrences of the PIN or email after a remind call.
 
-2. **Mobile horizontal scroll (E13).** A long unbroken string in a post
-   (200-char airport value) overflows the layout on a 390px viewport — every
-   ancestor up to `<html>` stretches to ~2085px. Add
-   `overflow-wrap: break-word` to `.post-leg` / post text and `overflow-x`
-   containment on `.posts-list`.
+2. **[FIXED]** ~~Mobile horizontal scroll.~~ `overflow-wrap: anywhere` added to
+   `.post-leg` and `.post-name` (with `min-width: 0` so the flex header can
+   shrink). Re-verify at 390px in Suite E13.
 
-3. **No rate limiting (G1/G2 + remind).** The gate password is brute-forceable
-   (30 wrong keys, no throttle), the 4-digit PIN is brute-forceable by anyone
-   holding the gate password (10,000 candidates, no lockout), and `/api/remind`
-   can be POSTed repeatedly to mail-bomb a guest's inbox once Resend is live.
-   Directly violates the project's "rate limiting on auth and write operations"
-   rule.
+3. **[OPEN] No rate limiting (G1/G2 + remind).** The gate password is
+   brute-forceable (30 wrong keys, no throttle), the 4-digit PIN is
+   brute-forceable by anyone holding the gate password (10,000 candidates, no
+   lockout), and `/api/remind` can be POSTed repeatedly to mail-bomb a guest's
+   inbox once Resend is live. Directly violates the project's "rate limiting on
+   auth and write operations" rule. Needs a KV or Durable Object design.
 
-4. **`id: null` returns 404, not 400 (C6).** `Number(null) === 0` passes the
-   `Number.isInteger` guard in `travel.js` and `remind.js`, so a null id is
-   treated as id 0 rather than rejected. Fails safely; wrong status code. Add a
-   `typeof body.id !== 'number'` guard.
+4. **[FIXED]** ~~`id: null` returns 404, not 400.~~ Added `parseId()` in
+   `response.js`, used by `travel.js` and `remind.js`. `null`/`[]`/`{}`/floats/
+   non-numeric strings → 400; integers and all-digit strings still accepted.
 
-5. **CSP blocks own analytics (minor).** The site injects the Cloudflare Insights
-   beacon, but the CSP `script-src 'self'` forbids it, so analytics silently
-   fail. Either allow `static.cloudflareinsights.com` or drop the beacon.
+5. **[OPEN] CSP blocks own analytics (minor).** The site injects the Cloudflare
+   Insights beacon, but the CSP `script-src 'self'` forbids it, so analytics
+   silently fail. Either allow `static.cloudflareinsights.com` or drop the
+   beacon.
 
 **Re-run required once Resend is configured:** Suite D (D1/D3) currently proves
 only the endpoint contract, not mail delivery. Re-run against a real inbox to

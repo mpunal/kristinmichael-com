@@ -2,7 +2,7 @@
    Auth: every request must carry header X-Guest-Key === env.GUEST_PASSWORD.
    The 4-digit pin is stored per post and never returned by any endpoint. */
 
-import { json } from './response.js';
+import { json, parseId } from './response.js';
 
 const TEXT_FIELDS = [
   'name', 'email', 'phone',
@@ -41,8 +41,17 @@ function validate(body) {
   if (!out.email) return { error: 'email is required' };
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(out.email)) return { error: 'invalid email address' };
 
-  const ride = body.ride ?? 'info';
-  if (!['need', 'offer', 'info'].includes(ride)) return { error: 'invalid ride option' };
+  // Times come from <input type="time"> as 24-hour 'HH:MM'; reject anything else.
+  for (const f of ['arrival_time', 'departure_time']) {
+    if (out[f] && !/^([01]\d|2[0-3]):[0-5]\d$/.test(out[f])) {
+      return { error: `invalid ${f}` };
+    }
+  }
+
+  // 'Just sharing my plans' was removed — a guest must be either looking for a
+  // ride or offering one. ride is now required, not defaulted.
+  const ride = body.ride;
+  if (!['need', 'offer'].includes(ride)) return { error: 'invalid ride option' };
   out.ride = ride;
 
   for (const f of ['party_size', 'seats']) {
@@ -104,7 +113,7 @@ async function update(request, env) {
   const body = await readBody(request);
   if (!body) return json({ error: 'invalid JSON body' }, 400);
 
-  const id = Number(body.id);
+  const id = parseId(body.id);
   if (!Number.isInteger(id)) return json({ error: 'invalid id' }, 400);
   const row = await env.DB.prepare('SELECT pin FROM travel_posts WHERE id = ?').bind(id).first();
   if (!row) return json({ error: 'post not found' }, 404);
@@ -135,7 +144,7 @@ async function remove(request, env) {
   const body = await readBody(request);
   if (!body) return json({ error: 'invalid JSON body' }, 400);
 
-  const id = Number(body.id);
+  const id = parseId(body.id);
   if (!Number.isInteger(id)) return json({ error: 'invalid id' }, 400);
   const row = await env.DB.prepare('SELECT pin FROM travel_posts WHERE id = ?').bind(id).first();
   if (!row) return json({ error: 'post not found' }, 404);

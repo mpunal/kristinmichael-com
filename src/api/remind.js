@@ -1,9 +1,10 @@
 /* POST /api/remind — email a post's PIN to the email address stored on it.
    The PIN is only ever sent to the stored address; it is never returned in
    the response and the caller cannot supply a different address.
-   Without RESEND_API_KEY (local dev) the email payload is logged instead. */
+   Without RESEND_API_KEY the send is skipped and only a non-sensitive note is
+   logged — the PIN and the recipient address are never written to the logs. */
 
-import { json } from './response.js';
+import { json, parseId } from './response.js';
 
 async function sendPin(request, env) {
   if (!env.GUEST_PASSWORD || request.headers.get('X-Guest-Key') !== env.GUEST_PASSWORD) {
@@ -16,7 +17,7 @@ async function sendPin(request, env) {
   } catch {
     return json({ error: 'invalid JSON body' }, 400);
   }
-  const id = Number(body.id);
+  const id = parseId(body.id);
   if (!Number.isInteger(id)) return json({ error: 'invalid id' }, 400);
 
   const row = await env.DB.prepare(
@@ -35,7 +36,9 @@ async function sendPin(request, env) {
   };
 
   if (!env.RESEND_API_KEY) {
-    console.log('[remind] RESEND_API_KEY not set — would send:', JSON.stringify(email));
+    // Never log the email object — email.text contains the PIN, and the
+    // recipient address is guest PII. Log only that a send was skipped.
+    console.log(`[remind] RESEND_API_KEY not set — PIN reminder skipped for post ${id}`);
   } else {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
