@@ -32,6 +32,27 @@ Variables and Secrets**, environment **Production**:
 | Secret | `GUEST_PASSWORD` | The password you'll share with guests |
 | Secret | `RESEND_API_KEY` | From step 3 |
 
+> **Both must be type _Secret_, never _Text_. A plaintext variable does not
+> survive a deploy.**
+>
+> This took the board down on 2026-07-26. `GUEST_PASSWORD` had been added in the
+> dashboard as a plaintext Text variable. `wrangler deploy` sends the binding set
+> from `wrangler.jsonc`, which defines no `vars` — so the deploy removed the
+> variable, `env.GUEST_PASSWORD` became undefined, and every guest got
+> `401 unauthorized` for ~15 minutes. `RESEND_API_KEY`, a real Secret, survived
+> the same deploy untouched.
+>
+> Two consequences worth remembering:
+> - Secrets persist across deploys; dashboard-set `vars` do not, unless they are
+>   also declared in `wrangler.jsonc`. Never split the difference.
+> - A missing `GUEST_PASSWORD` and a wrong one are indistinguishable from
+>   outside — `authorized()` returns `401` for both. If guests report the
+>   password not working, check that the binding still exists *before* assuming
+>   someone mistyped it.
+>
+> Recovery, if it happens again: `npx wrangler secret put GUEST_PASSWORD`.
+> Allow up to a minute for the new version to propagate to the edge.
+
 ## 3. Email for "Forgot PIN" (~10 min)
 
 Sign up at [resend.com](https://resend.com) — free tier, 100 emails/day and
