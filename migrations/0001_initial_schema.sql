@@ -1,9 +1,13 @@
-/* Guest travel board — single table.
-   Apply locally:  npx wrangler d1 execute wedding-travel --local  --file=schema.sql
-   Apply to prod:  npx wrangler d1 execute wedding-travel --remote --file=schema.sql
-   (Pasting into the Cloudflare D1 dashboard console also works — this file
-   uses only block comments so a console that flattens multi-line input into
-   one line can't have a comment swallow the rest of the statement.) */
+/* Guest travel board — baseline schema.
+
+   Applied by `npx wrangler d1 migrations apply wedding-travel` — see README.
+   This was the repo's schema.sql, applied by hand before migrations existed,
+   so the production table already matches it. IF NOT EXISTS makes replaying it
+   against that live table a no-op, which is what lets Wrangler adopt the
+   existing database without recreating anything.
+
+   This file uses only block comments, so a D1 dashboard console that flattens
+   multi-line input into one line can't have a comment swallow the statement. */
 CREATE TABLE IF NOT EXISTS travel_posts (
   id                INTEGER PRIMARY KEY AUTOINCREMENT,
   name              TEXT NOT NULL,

@@ -1,0 +1,17 @@
+# Copy to .dev.vars for local development. .dev.vars is gitignored; this
+# example file is the only one that gets committed.
+
+# Password for the travel board gate. Local-only value — the real production
+# password is a Cloudflare secret and is deliberately different.
+GUEST_PASSWORD=localtest2026
+
+# Log "Forgot PIN?" reminders instead of sending them. Keeps local testing from
+# ever reaching a real guest's inbox, and makes the endpoint answer with a
+# distinct "(dev) PIN reminder logged, not sent" message so a local run can
+# never be mistaken for a real delivery. Never set this in production.
+EMAIL_DEV_MODE=true
+
+# RESEND_API_KEY is intentionally absent here. It lives only as a Cloudflare
+# secret on the deployed Worker (`npx wrangler secret put RESEND_API_KEY`), so
+# dev and production never share a credential. With no key and no
+# EMAIL_DEV_MODE, /api/remind returns 503 rather than pretending it sent mail.

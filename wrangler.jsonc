@@ -19,7 +19,13 @@
     {
       "binding": "DB",
       "database_name": "wedding-travel",
-      "database_id": "850ea18b-4703-42c7-b766-2d1e49a6e466"
+      "database_id": "850ea18b-4703-42c7-b766-2d1e49a6e466",
+
+      // Schema changes go through migrations/, never a hand-run d1 execute.
+      // Wrangler tracks what it has applied in a d1_migrations table, so
+      // `d1 migrations apply` is safe to re-run and safe to run against the
+      // already-populated production database.
+      "migrations_dir": "./migrations"
     }
   ],
 

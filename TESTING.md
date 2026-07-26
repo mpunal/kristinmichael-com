@@ -160,11 +160,18 @@ test that keeps it omitted.
 
 ## Suite D — Forgot-PIN / email
 
-`RESEND_API_KEY` is **not** configured. The documented behavior is that the email
-payload is logged instead of sent, and the endpoint still reports success.
+Behavior depends on how the environment is configured, and the three cases are
+deliberately distinguishable — the endpoint no longer reports success when it
+has not sent anything:
 
-**D1** — `POST /api/remind` with a valid id and key → `200`
-`{"ok":true,"message":"PIN sent to the email on this post"}`.
+| Environment | Result |
+|---|---|
+| `RESEND_API_KEY` set (production) | sends, `200` `"PIN sent to the email on this post"` |
+| `EMAIL_DEV_MODE=true`, no key (local) | logs, `200` `"(dev) PIN reminder logged, not sent"` |
+| Neither set | `503` `"email is not configured — …"` |
+
+**D1** — `POST /api/remind` with a valid id and key → `200` with the message
+matching the configured environment from the table above.
 
 **D2** — the response body must **not** contain the PIN. The whole point is that
 the PIN goes only to the stored address.
@@ -177,8 +184,23 @@ the PIN goes only to the stored address.
 
 **D5** — unauthenticated → `401`.
 
-> Once Resend is configured, D1 must be re-run and a real inbox checked. Until
-> then D1 only proves the endpoint contract, not that mail is delivered.
+**D6** — cooldown: repeat D1 immediately → `429` with a `Retry-After` header.
+`SELECT id, last_remind_at FROM travel_posts` must show a `Z`-suffixed ISO-8601
+UTC string. A bare `YYYY-MM-DD HH:MM:SS` here is a bug — V8 parses that as local
+time and the ten-minute window would be skewed by the UTC offset.
+
+**D7** — a failed send must not start a cooldown: with neither key nor dev mode,
+call D1 (→ `503`), then confirm `last_remind_at` is still unchanged. Otherwise a
+transient Resend outage would lock a guest out for ten minutes with no email.
+
+**D8** — logs stay clean: grep the `wrangler dev` output for the PIN and for `@`.
+Neither the PIN nor any recipient address may appear — only the post id. This
+guards the fix for the plaintext-PIN logging defect.
+
+> D1 against production must be confirmed against a **real inbox** (check spam —
+> first sends from a newly verified domain often land there), plus a `delivered`
+> entry in the Resend dashboard. Local dev mode proves the contract and the
+> throttle, never delivery.
 
 ---
 
@@ -265,9 +287,10 @@ and it must not break the layout. Fixed 2026-07-21 (`overflow-wrap: anywhere` on
 ```
 /.git/HEAD  /.git/index  /.git/config  /.git/logs/HEAD
 /schema.sql  /wrangler.jsonc  /wrangler.toml  /package.json
+/migrations/0001_initial_schema.sql  /migrations/0002_add_last_remind_at.sql
 /README.md  /SETUP-TRAVEL-BOARD.md  /TESTING.md
 /src/index.js  /src/api/travel.js  /src/api/remind.js
-/functions/api/travel.js  /.dev.vars  /.assetsignore
+/functions/api/travel.js  /.dev.vars  /.dev.vars.example  /.assetsignore
 ```
 
 This is a **regression guard**. Every one of the `.git` paths returned `200` on
@@ -404,12 +427,16 @@ Defects 1, 2, and 4 were **fixed 2026-07-21**; 3 and 5 remain open.
    `.post-leg` and `.post-name` (with `min-width: 0` so the flex header can
    shrink). Re-verify at 390px in Suite E13.
 
-3. **[OPEN] No rate limiting (G1/G2 + remind).** The gate password is
-   brute-forceable (30 wrong keys, no throttle), the 4-digit PIN is
-   brute-forceable by anyone holding the gate password (10,000 candidates, no
-   lockout), and `/api/remind` can be POSTed repeatedly to mail-bomb a guest's
-   inbox once Resend is live. Directly violates the project's "rate limiting on
-   auth and write operations" rule. Needs a KV or Durable Object design.
+3. **[PARTIALLY FIXED] No rate limiting (G1/G2 + remind).**
+   - `/api/remind` **is now throttled**: one reminder per post per 10 minutes,
+     tracked in `travel_posts.last_remind_at`, returning `429` + `Retry-After`.
+     Closes the mail-bomb and Resend-quota-drain vector. Covered by D6/D7.
+   - **Still open:** the gate password is brute-forceable (30 wrong keys, no
+     throttle) and the 4-digit PIN is brute-forceable by anyone holding the gate
+     password (10,000 candidates, no lockout). Both still violate the project's
+     "rate limiting on auth and write operations" rule. The per-post D1 column
+     used for remind does not generalise to these — they are per-*caller* limits
+     and need KV or a Durable Object.
 
 4. **[FIXED]** ~~`id: null` returns 404, not 400.~~ Added `parseId()` in
    `response.js`, used by `travel.js` and `remind.js`. `null`/`[]`/`{}`/floats/
@@ -420,10 +447,12 @@ Defects 1, 2, and 4 were **fixed 2026-07-21**; 3 and 5 remain open.
    silently fail. Either allow `static.cloudflareinsights.com` or drop the
    beacon.
 
-**Re-run required once Resend is configured:** Suite D (D1/D3) currently proves
-only the endpoint contract, not mail delivery. Re-run against a real inbox to
-confirm mail arrives, and arrives at the *stored* address rather than an
-injected one.
+**Re-run required once Resend is configured:** Suite D (D1/D3) proves only the
+endpoint contract, not mail delivery. Re-run against a real inbox to confirm
+mail arrives, and arrives at the *stored* address rather than an injected one.
+The silent-success defect this note was written against is fixed — an
+unconfigured endpoint now returns `503` — but that only removes the false
+positive; it still does not prove delivery.
 
 **Safety record:** pre-flight and post-flight non-test row counts both 0 — the
 run created and removed 20+ rows and left the production database exactly as

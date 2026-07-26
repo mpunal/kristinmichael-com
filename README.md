@@ -7,8 +7,8 @@ the guest travel board.
 ## File structure
 
 Everything web-accessible lives in `public/`. Nothing outside it is ever
-served — that boundary is what keeps `schema.sql` and the API source private,
-so do not move site files back to the repo root.
+served — that boundary is what keeps the migrations and the API source
+private, so do not move site files back to the repo root.
 
 ```
 ├── public/               # ← the ONLY publicly served directory
@@ -29,7 +29,10 @@ so do not move site files back to the repo root.
 │       ├── travel.js     # Travel board CRUD (D1)
 │       ├── remind.js     # "Forgot PIN" email via Resend
 │       └── response.js   # Shared JSON response helper
-├── schema.sql            # D1 table definition
+├── migrations/           # D1 schema history — applied by wrangler, in order
+│   ├── 0001_initial_schema.sql
+│   └── 0002_add_last_remind_at.sql
+├── .dev.vars.example     # Template for local secrets (.dev.vars is gitignored)
 ├── wrangler.jsonc        # Worker config — the single source of truth
 └── README.md
 ```
@@ -65,13 +68,23 @@ deploys automatically. There is nothing to run by hand.
 ### Local development
 
 ```bash
-echo 'GUEST_PASSWORD=localtest2026' > .dev.vars   # gitignored
-npx wrangler d1 execute wedding-travel --local --file=schema.sql
+cp .dev.vars.example .dev.vars                        # gitignored
+npx wrangler d1 migrations apply wedding-travel --local
 npx wrangler dev --port 8788
 ```
 
-Without `RESEND_API_KEY` in `.dev.vars`, Forgot-PIN emails are logged to the
-console instead of sent, so the whole board is testable offline.
+`EMAIL_DEV_MODE=true` (from the example file) logs Forgot-PIN reminders instead
+of sending them, so the whole board is testable offline and a local run can
+never reach a real guest's inbox. No Resend key belongs in `.dev.vars` — it
+lives only as a Worker secret, so dev and production never share a credential.
+
+### Database changes
+
+Schema changes go in `migrations/`, never a hand-run `d1 execute --file=`.
+Wrangler applies them in filename order and records what it has applied, so
+`npx wrangler d1 migrations apply wedding-travel --remote` is safe to re-run.
+Apply migrations to remote **before** deploying code that reads the new
+columns.
 
 ### A note on config
 
