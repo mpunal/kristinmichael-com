@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-worker:
+    name: Build Worker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # This site is a Worker with static assets, not a Pages project — there is
+      # no functions/ directory to build, which is why the original
+      # `pages functions build` job could never pass. `deploy --dry-run` is the
+      # equivalent check: it bundles src/index.js, resolves the bindings declared
+      # in wrangler.jsonc and walks assets.directory, then exits before uploading
+      # anything. It needs no credentials, which is why no secret is wired up
+      # here. Workers Builds still performs the real deploy on push.
+      - name: Build Worker (no deploy)
+        run: npx --yes wrangler@4 deploy --dry-run --outdir=/tmp/worker-build
