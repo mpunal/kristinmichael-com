@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venue Map | Sugar Hollow Retreat | Michael &amp; Kristin's Wedding</title>
+  <meta name="description" content="Map of Sugar Hollow Retreat in Butler, Tennessee for Michael Punal and Kristin Donohue's wedding: the two entrances, the guest houses and where each event happens. Save it to your phone before you arrive — cell service at the venue is limited.">
+  <link rel="canonical" href="https://kristinmichael.com/venue-map">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://kristinmichael.com/venue-map">
+  <meta property="og:title" content="Venue Map | Sugar Hollow Retreat">
+  <meta property="og:description" content="The two entrances, the guest houses and where each event happens at Sugar Hollow Retreat. Save it to your phone before you arrive — cell service at the venue is limited.">
+  <meta property="og:image" content="https://kristinmichael.com/images/og-cover.jpg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header site-header--solid" role="banner">
+    <nav class="nav-container" aria-label="Main navigation">
+      <a href="/" class="nav-logo" aria-label="Michael &amp; Kristin — home">
+        M <span class="nav-amp">&amp;</span> K
+      </a>
+
+      <button
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="nav-menu"
+        aria-label="Open navigation menu"
+      >
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+
+      <ul class="nav-menu" id="nav-menu" role="list">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/#details" class="nav-link">Details</a></li>
+        <li><a href="/venue-map" class="nav-link" aria-current="page">Venue Map</a></li>
+        <li><a href="/travel" class="nav-link">Coordinate Travel</a></li>
+        <li>
+          <a
+            href="https://withjoy.com/michael-kristin-2026/"
+            class="nav-link nav-link--cta"
+            target="_blank"
+            rel="noopener noreferrer"
+          >RSVP</a>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main-content" class="map-main">
+    <div class="container">
+
+      <p class="eyebrow eyebrow--dark">Plan your visit</p>
+      <h1 class="section-title">Venue Map</h1>
+
+      <div class="map-actions">
+        <button class="btn btn-primary" id="map-download" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>
+          </svg>
+          Save map to your phone
+        </button>
+        <p class="map-note">
+          Do this before you arrive — <b>Sugar Hollow has very limited cell service</b>,
+          so the map may not load once you're on the property.
+        </p>
+        <p class="form-error" id="map-error" role="alert" hidden></p>
+      </div>
+
+      <div class="map-layout">
+        <figure class="map-figure">
+          <div class="map-card">
+            <p class="map-card-label">Sugar Hollow Retreat</p>
+            <svg id="venue-map" viewBox="80 120 804 654" preserveAspectRatio="xMidYMid meet"
+                 role="img" aria-label="Map of Sugar Hollow Retreat showing 12 numbered locations, the two entrances and the roads between them"></svg>
+          </div>
+          <figcaption class="map-caption">
+            Gold stars mark the two places the weekend's events happen, and the small
+            chapels are where the bridal party stays. The two green markers are the
+            entrances, off Hwy&nbsp;321 and Elk Ridge Road; terracotta pins are the
+            guest houses and other gathering spots.
+          </figcaption>
+        </figure>
+
+        <aside class="map-legend">
+          <h2>Locations</h2>
+          <ol id="map-legend-list"></ol>
+        </aside>
+      </div>
+
+      <section class="map-save" id="map-save-panel" aria-labelledby="map-save-title" hidden>
+        <h2 id="map-save-title">Save it to your photos</h2>
+        <p>
+          On iPhone, press and hold the image, then tap <b>Save to Photos</b>.
+          On Android, long-press and choose <b>Download image</b>.
+        </p>
+        <img id="map-poster" alt="Printable venue map for Sugar Hollow Retreat">
+        <a class="btn btn-primary" id="map-save-link" download="sugar-hollow-venue-map.png" href="#">Download</a>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p class="footer-names">Michael &amp; Kristin</p>
+      <p class="footer-date">September 25, 2026 &bull; Butler, Tennessee</p>
+      <p class="footer-venue">Sugar Hollow Retreat</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="map.js"></script>
+</body>
+</html>

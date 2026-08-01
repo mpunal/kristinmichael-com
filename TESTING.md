@@ -298,8 +298,9 @@ production on 2026-07-20 — full repository history was publicly downloadable. 
 any of these ever returns `200` again, treat it as an incident, not a test
 failure.
 
-**F2 — public files stay public.** `/`, `/travel`, `/style.css`, `/script.js`,
-`/travel.js`, `/robots.txt`, `/sitemap.xml`, `/images/hero-couple.jpg` → `200`.
+**F2 — public files stay public.** `/`, `/travel`, `/venue-map`, `/style.css`,
+`/script.js`, `/travel.js`, `/map.js`, `/robots.txt`, `/sitemap.xml`,
+`/images/hero-couple.jpg` → `200`.
 
 **F3 — security headers** present on `/`: `content-security-policy`,
 `x-frame-options: DENY`, `x-content-type-options: nosniff`,
