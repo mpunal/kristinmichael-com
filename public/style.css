@@ -293,7 +293,9 @@ ul  { list-style: none; }
   position: relative;
   z-index: 1;
   padding: 7rem var(--px) 4rem;
-  max-width: 720px;
+  /* 900px (was 720px) so the full-name H1 fits on one line on desktop.
+     Other hero elements are short centred text and are unaffected. */
+  max-width: 900px;
   color: var(--white);
 }
 
@@ -304,12 +306,20 @@ ul  { list-style: none; }
 
 .hero-names {
   font-family: var(--serif);
-  font-size: clamp(3.25rem, 11vw, 6.5rem);
+  /* "Michael Punal & Kristin Donohue" renders at ~14.9x the font size. Capped at
+     3.25rem so it fits one line inside .hero-content (900px - 80px padding = 820px).
+     Below ~550px viewport it wraps, and .name-unit forces that break at the
+     ampersand rather than inside a name. */
+  font-size: clamp(1.85rem, 5.4vw, 3.25rem);
   font-weight: 400;
-  line-height: 1.05;
+  line-height: 1.2;
   letter-spacing: -0.01em;
   margin-bottom: 1.5rem;
 }
+
+/* Keep each full name atomic so a line break can only land at the ampersand,
+   never inside a name. */
+.name-unit { white-space: nowrap; }
 
 .amp-italic {
   font-style: italic;
@@ -509,8 +519,16 @@ ul  { list-style: none; }
   font-size: 1.0625rem;
   color: rgba(255,255,255,0.82);
   max-width: 540px;
-  margin: 0 auto 2.5rem;
+  margin: 0 auto 1rem;
   line-height: 1.75;
+}
+
+.cta-signature {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.125rem;
+  color: var(--tan);
+  margin: 0 auto 2.5rem;
 }
 
 .cta-buttons {
