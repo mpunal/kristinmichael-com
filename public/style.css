@@ -859,3 +859,162 @@ input:focus-visible {
 
 /* Author display rules (e.g. .btn) would otherwise override the UA [hidden] rule */
 [hidden] { display: none !important; }
+
+/* ── Venue map ─────────────────────────────────────────────── */
+
+/* The only colours the site palette has no equivalent for. */
+:root {
+  --map-ground:    #DBE2CF;
+  --map-tree:      #C2CFB0;
+  --map-pond:      #BCD0CF;
+  --map-road:      #D8C29A;
+  --map-road-edge: #8C7B63;
+  /* Warm amber rather than a true yellow — pure yellow reads as a warning
+     against this cream, and white numerals on it fail contrast at 1.9:1.
+     Brown numerals on this gold are 8.4:1. */
+  --map-star:      #E9B23C;
+}
+
+.map-main {
+  padding: clamp(7rem, 12vw, 9rem) 0 clamp(3rem, 6vw, 4.5rem);
+  background-color: var(--cream);
+}
+/* Tighter than the site default — this page is condensed on purpose. */
+.map-main .section-title { margin-bottom: 1.125rem; }
+
+.map-actions { text-align: center; margin-bottom: clamp(1.75rem, 4vw, 2.5rem); }
+.map-actions .btn { display: inline-flex; align-items: center; gap: 0.625rem; }
+.map-actions .btn svg { width: 17px; height: 17px; }
+.map-note {
+  font-size: 0.875rem; color: var(--brown-lt);
+  margin: 0.75rem auto 0; max-width: 34rem;
+}
+.map-note b { color: var(--terra); font-weight: 700; }
+.map-actions .form-error { margin-bottom: 0; }
+
+.map-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+.map-figure { margin: 0; }
+.map-caption {
+  font-size: 0.8125rem; line-height: 1.5; color: var(--brown-lt);
+  padding: 0.875rem 0.25rem 0; max-width: 32rem;
+}
+
+.map-card {
+  position: relative;
+  background-color: var(--map-ground);
+  border: 1px solid var(--tan);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.map-card svg { display: block; width: 100%; height: auto; }
+/* Bottom-left: the top-left corner is where markers 11 and 12 sit, and the
+   badge was covering marker 12 entirely. */
+.map-card-label {
+  position: absolute; bottom: 0.75rem; left: 0.75rem;
+  background-color: rgba(250, 246, 239, 0.92);
+  border: 1px solid var(--tan); border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.625rem; font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--green);
+}
+
+.map-legend {
+  border: 1px solid var(--tan); border-radius: 8px;
+  background-color: var(--white); overflow: hidden;
+}
+.map-legend h2 {
+  font-family: var(--serif); font-size: 1.125rem; font-weight: 400;
+  color: var(--brown); padding: 0.875rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--tan);
+}
+.map-legend ol { list-style: none; }
+.map-legend li {
+  display: flex; gap: 0.75rem; padding: 0.5rem 1rem;
+  border-top: 1px solid rgba(212, 196, 168, 0.45);
+}
+.map-legend li:first-child { border-top: none; }
+
+.map-key {
+  flex: none; width: 24px; height: 24px; margin-top: 0.15rem;
+  border-radius: 50%; background-color: var(--terra); color: var(--white);
+  font-size: 0.75rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.map-key--entry { background-color: var(--green); border-radius: 6px; }
+/* Star, chapel and binocular keys are drawn shapes, not filled chips, so the
+   chip's own background and rounding have to be cleared or a coloured disc
+   shows behind them. Each is 4px wider than the 24px chip and pulls that back
+   out of the 12px gutter, and each viewBox is centred on the point the numeral
+   occupies — so every row's numeral and every row's text still land on the
+   same two x positions whatever shape is drawn. Only the heights differ, by
+   how tall the shape is: a wider box here would step three rows right. */
+.map-key--glyph { background-color: transparent; border-radius: 0; overflow: visible; }
+.map-key--event     { width: 28px; height: 28px; margin-left: -2px; margin-right: -2px; }
+.map-key--chapel    { width: 28px; height: 32px; margin-left: -2px; margin-right: -2px; }
+.map-key--viewpoint { width: 28px; height: 27px; margin-left: -2px; margin-right: -2px; }
+.map-key-star   { fill: var(--map-star); }
+.map-key-chapel,
+.map-key-viewpoint { fill: var(--terra); }
+.map-key-num {
+  fill: var(--white); font-family: var(--sans); font-weight: 700;
+  font-size: 13px; text-anchor: middle;
+}
+/* Only the gold star needs dark ink — white on that gold is 1.9:1, brown 8.4:1. */
+.map-key-num--dark { fill: var(--brown); }
+
+.map-text { display: flex; flex-direction: column; }
+.map-place {
+  font-family: var(--serif); font-size: 0.9375rem; font-weight: 500;
+  color: var(--brown); line-height: 1.35;
+}
+.map-desc { font-size: 0.75rem; line-height: 1.45; color: var(--brown-lt); }
+
+/* ── On-page map graphic ──────────────────────────────────── */
+.map-edge-base { fill: none; stroke: var(--map-road-edge); stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
+.map-edge-top  { fill: none; stroke: var(--map-road);      stroke-width: 11; stroke-linecap: round; stroke-linejoin: round; }
+.map-edge-dash { fill: none; stroke: var(--cream);         stroke-width: 2;  stroke-linecap: round; stroke-dasharray: 1.5 11; opacity: 0.85; }
+.map-dot  { fill: var(--terra); stroke: var(--cream); stroke-width: 3; }
+.map-star { fill: var(--map-star); stroke: var(--cream); stroke-width: 3; stroke-linejoin: round; }
+/* The chapel is one path made of two overlapping subpaths — a cross dropped
+   onto a roof. paint-order puts the cream halo under the fill, so it traces
+   the outer silhouette and the seam where the two meet stays invisible. The
+   binoculars are a single outline and do not need it, but share the rule so
+   both new markers carry an identical halo. */
+.map-chapel, .map-viewpoint {
+  fill: var(--terra); stroke: var(--cream); stroke-width: 3;
+  stroke-linejoin: round; paint-order: stroke;
+}
+.map-gate { fill: var(--green); stroke: var(--cream); stroke-width: 2.6; stroke-linejoin: round; }
+.map-gate-arrow { fill: none; stroke: var(--white); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.map-num {
+  fill: var(--white); font-family: var(--sans); font-weight: 700;
+  font-size: 15px; text-anchor: middle; dominant-baseline: central;
+}
+.map-num--onstar { fill: var(--brown); }
+
+/* ── Save-to-phone panel (revealed after the PNG is built) ── */
+.map-save {
+  max-width: 24rem; margin: clamp(2rem, 5vw, 3rem) auto 0;
+  text-align: center; padding: 1.5rem;
+  border: 1px solid var(--tan); border-radius: 8px;
+  background-color: var(--white);
+}
+.map-save h2 {
+  font-family: var(--serif); font-size: 1.25rem; font-weight: 400;
+  color: var(--brown); margin-bottom: 0.5rem;
+}
+.map-save p { font-size: 0.8125rem; color: var(--brown-lt); margin-bottom: 1rem; }
+.map-save img { border: 1px solid var(--tan); border-radius: var(--radius); margin-bottom: 1rem; }
+.map-save .btn { width: 100%; }
+
+@media (max-width: 768px) {
+  .map-layout { grid-template-columns: 1fr; }
+  /* Two columns of six on a tablet, one column on a phone. */
+  .map-legend ol { display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); }
+}
