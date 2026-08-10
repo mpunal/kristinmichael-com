@@ -13,10 +13,13 @@ private, so do not move site files back to the repo root.
 ```
 ├── public/               # ← the ONLY publicly served directory
 │   ├── index.html        # Home page (hero, countdown, details, CTA)
+│   ├── schedule.html     # Weekend schedule — served at /schedule
+│   ├── venue-map.html    # Venue map — served at /venue-map
 │   ├── travel.html       # Password-gated guest travel board
 │   ├── style.css         # All styles (shared across pages)
 │   ├── script.js         # Countdown timer + mobile nav
 │   ├── travel.js         # Travel board client
+│   ├── map.js            # Venue map rendering + PNG export
 │   ├── sitemap.xml       # SEO sitemap — update lastmod when content changes
 │   ├── robots.txt        # Allows all crawlers, points to sitemap
 │   ├── _headers          # Security headers applied to every response
