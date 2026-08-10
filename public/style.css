@@ -1036,3 +1036,285 @@ input:focus-visible {
   /* Two columns of six on a tablet, one column on a phone. */
   .map-legend ol { display: grid; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); }
 }
+
+/* ── Schedule ─────────────────────────────────────────────── */
+/* Themed after the "Weekend Festivities" insert in the invitation suite:
+   a flat dark card with white chevron rails down both edges. */
+
+:root {
+  /* Cooler than --green-dark (#2C4A2C) — the insert's stock is a slate, not an olive. */
+  --slate: #2F3A37;
+
+  /* --terra on --cream is only 3.34:1, which fails AA for body-sized text. The
+     event times are the most important information on this page, so they use a
+     deepened terracotta that reads the same but measures 4.92:1. */
+  --terra-deep: #A35730;
+}
+
+.schedule-hero {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--slate);
+  color: var(--white);
+  /* Also clears the fixed header — this page has no .site-header--solid,
+     so the band itself does the job .map-main's top padding does elsewhere. */
+  padding: clamp(7.5rem, 13vw, 10rem) 0 clamp(3.5rem, 7vw, 5rem);
+  text-align: center;
+}
+
+/* The rails frame the text, not the viewport, so they are positioned against
+   this centred block rather than against the full-bleed band. */
+.schedule-hero__frame {
+  position: relative;
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: 0 clamp(3.5rem, 11vw, 5.5rem);
+}
+
+/* Decorative chevron rails. The inline SVG data: URI is permitted by the CSP
+   in public/_headers, which sets img-src 'self' data: — that directive governs
+   CSS background images as well as <img>. */
+.schedule-hero__rail {
+  position: absolute;
+  top: -0.5rem;
+  bottom: -0.5rem;
+  width: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='30' viewBox='0 0 40 30'%3E%3Cpath d='M0 0 L20 14 L40 0 L40 9 L20 23 L0 9 Z' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-repeat: repeat-y;
+  background-position: center top;
+  opacity: 0.32;
+  pointer-events: none;
+  /* repeat-y clips mid-chevron at both ends; fade it so that reads as
+     intentional rather than as a cut-off graphic. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);
+}
+.schedule-hero__rail--left  { left:  0; }
+.schedule-hero__rail--right { right: 0; }
+
+.schedule-hero__inner { position: relative; z-index: 1; }
+
+.schedule-hero__title {
+  font-family: var(--sans);
+  font-size: clamp(1.75rem, 5.5vw, 2.875rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.schedule-hero__date {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.125rem, 3vw, 1.5rem);
+  font-weight: 400;
+  color: var(--tan);
+  margin-top: 0.875rem;
+}
+
+.schedule-hero__rule {
+  width: 3.5rem;
+  height: 1px;
+  background-color: rgba(255,255,255,0.35);
+  margin: 1.5rem auto;
+  border: 0;
+}
+
+.schedule-hero__place {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.72);
+}
+
+/* ── Timeline ─────────────────────────────────────────────── */
+.schedule-main {
+  background-color: var(--cream);
+  padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(4rem, 8vw, 6rem);
+}
+
+/* A reading column, not a full-width band: at the shared --max-w of 1100px the
+   copy occupies about a third of the width and the day rules run out into
+   nothing. Declared after .container so it wins on equal specificity. */
+.schedule-column {
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.schedule-intro {
+  max-width: 34rem;
+  margin: 0 auto clamp(2.5rem, 6vw, 3.5rem);
+  text-align: center;
+  color: var(--brown-lt);
+}
+
+.schedule-day + .schedule-day { margin-top: clamp(2.75rem, 6vw, 4rem); }
+
+.schedule-day__heading {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--brown);
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--tan);
+  margin-bottom: 2rem;
+}
+
+.schedule-list {
+  position: relative;
+  margin-left: 0.375rem;
+  padding-left: 2.25rem;
+  border-left: 2px solid var(--tan);
+  /* The global reset only clears markers on ul; this is an ol (the order is
+     meaningful) and the timeline nodes are the visual marker. */
+  list-style: none;
+}
+
+.schedule-event { position: relative; }
+.schedule-event + .schedule-event { margin-top: 2.5rem; }
+
+/* Timeline node, sitting on the list's left border. */
+.schedule-event::before {
+  content: "";
+  position: absolute;
+  left: -2.25rem;
+  top: 0.5rem;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background-color: var(--cream);
+  border: 2px solid var(--tan-mid);
+  transform: translateX(calc(-50% - 1px));
+}
+
+/* The ceremony is the anchor of the weekend — filled terracotta node. */
+.schedule-event--feature::before {
+  width: 15px;
+  height: 15px;
+  top: 0.375rem;
+  background-color: var(--terra);
+  border-color: var(--terra);
+  box-shadow: 0 0 0 4px var(--cream), 0 0 0 5px var(--parchment);
+}
+
+.schedule-event__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.625rem 0.875rem;
+  margin-bottom: 0.25rem;
+}
+
+.schedule-event__name {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(1.375rem, 3vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--brown);
+}
+.schedule-event--feature .schedule-event__name {
+  font-size: clamp(1.625rem, 3.6vw, 2.125rem);
+  font-weight: 500;
+}
+
+/* "Optional" — a shaped, labelled pill, so it does not rely on colour alone. */
+.schedule-tag {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brown);        /* --brown-lt on parchment is only 3.68:1 */
+  background-color: var(--parchment);
+  border: 1px solid var(--tan);
+  border-radius: 999px;
+  padding: 0.1875rem 0.625rem;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.schedule-event__time {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--terra-deep);   /* 4.92:1 on cream — see token comment above */
+  margin-bottom: 0.125rem;
+}
+
+.schedule-event__venue {
+  font-size: 0.9375rem;
+  color: var(--brown);
+  margin-bottom: 0.625rem;
+}
+.schedule-event__venue::before {
+  content: "";
+  display: inline-block;
+  width: 0.5rem;
+  height: 1px;
+  background-color: var(--tan-mid);
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.schedule-event__body {
+  font-size: 0.9375rem;
+  color: var(--brown-lt);
+  max-width: 44ch;
+}
+
+.schedule-event__attire {
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--brown-lt);
+  margin-top: 0.5rem;
+}
+.schedule-event__attire strong {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-right: 0.375rem;
+}
+
+/* ── Closing address ──────────────────────────────────────── */
+.schedule-address {
+  margin-top: clamp(3rem, 7vw, 4.5rem);
+  padding-top: clamp(2rem, 4vw, 2.5rem);
+  border-top: 1px solid var(--tan);
+  text-align: center;
+}
+.schedule-address__label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--terra-deep);
+  margin-bottom: 0.5rem;
+}
+.schedule-address__value {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  color: var(--brown);
+}
+.schedule-address__note {
+  font-size: 0.875rem;
+  color: var(--brown-lt);
+  margin-top: 0.375rem;
+}
+
+@media (max-width: 768px) {
+  .schedule-hero__frame { padding: 0 0.5rem; }
+  /* The rails would eat the content column on a phone. */
+  .schedule-hero__rail { display: none; }
+
+  .schedule-list { padding-left: 1.5rem; margin-left: 0.25rem; }
+  .schedule-event::before { left: -1.5rem; }
+  .schedule-event + .schedule-event { margin-top: 2rem; }
+}
